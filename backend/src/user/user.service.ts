@@ -2,8 +2,8 @@ import {
   BadGatewayException,
   Injectable,
   NotFoundException,
-} from '@nestjs/common';
-import { GitHubUserDto } from './dto/github-user.dto';
+} from "@nestjs/common";
+import { GitHubUserDto } from "./dto/github-user.dto";
 
 interface GitHubUserResponse {
   login: string;
@@ -28,8 +28,11 @@ export class UserService {
         `https://api.github.com/users/${encodeURIComponent(username)}`,
         {
           headers: {
-            Accept: 'application/vnd.github+json',
-            'User-Agent': 'github-profile-challenge',
+            Accept: "application/vnd.github+json",
+            "User-Agent": "github-profile-challenge",
+            ...(process.env.GITHUB_TOKEN && {
+              Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+            }),
           },
         },
       );
@@ -42,7 +45,7 @@ export class UserService {
 
       if (!response.ok) {
         throw new BadGatewayException(
-          'No se pudo obtener la información desde GitHub',
+          "No se pudo obtener la información desde GitHub",
         );
       }
 
@@ -71,7 +74,7 @@ export class UserService {
       }
 
       throw new BadGatewayException(
-        'Ocurrió un error al comunicarse con GitHub',
+        "Ocurrió un error al comunicarse con GitHub",
       );
     }
   }
